@@ -12,4 +12,4 @@ const connectedUsersSchema = new Schema({
   }]
 });
 
-module.exports = mongoose.model('connectedUsers', connectedUsersSchema);
+module.exports = mongoose.model('ConnectedUsers', connectedUsersSchema);

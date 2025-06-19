@@ -9,7 +9,7 @@ const searchHandler = async (req, res)=>{
     try{
         const users = await User.find({
             username: { $regex: username, $options: 'i' } // Ary will give names like aryan
-        })
+        });
 
         if (users.length === 0) return res.status(404).json({ message: 'No users found' });
 
