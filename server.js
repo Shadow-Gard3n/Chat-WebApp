@@ -4,6 +4,8 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const corsconfig = require('./config/cors');
 const connectDB = require('./config/dbconfig')
+const cookieParser = require('cookie-parser');
+const verifyJWT = require('./middleware/verifyJWT');
 
 const app = express();
 const PORT = process.env.PORT || 3500;
@@ -11,6 +13,7 @@ const PORT = process.env.PORT || 3500;
 connectDB();
 app.use(cors(corsconfig))
 app.use(express.json())
+app.use(cookieParser());
 
 app.use((req,res,next)=>{
   console.log(`${req.url} ${req.method}`)
@@ -18,6 +21,8 @@ app.use((req,res,next)=>{
 })
 
 app.use('/',require('./routes/rootRoutes'))
+app.use(verifyJWT)
+// app.use('/user',require('./routes/userRoutes'))
 
 mongoose.connection.once('open',()=>{
   app.listen(PORT, () => {

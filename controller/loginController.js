@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const handleLogin = async (req, res)=>{
-    const {name, pass} = req.body;
-    if (!name || !pass) return res.status(400).json({'message': "Username and Password are required"});
+    const {user, pass} = req.body;
+    if (!user || !pass) return res.status(400).json({'message': "Username and Password are required"});
 
-    const foundUser = await User.findOne({username: name}).exec();
+    const foundUser = await User.findOne({username: user}).exec();
     if (!foundUser) return res.sendStatus(401);
     const match = await bcrypt.compare(pass, foundUser.password);
 
@@ -18,7 +18,7 @@ const handleLogin = async (req, res)=>{
                 "username": foundUser.username
             },
             process.env.ACCESS_TOKEN_KEY,
-            {expiresIn: '20min'}
+            {expiresIn: '20m'}
         );
 
         const refreshToken = jwt.sign(
