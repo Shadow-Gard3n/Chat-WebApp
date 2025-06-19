@@ -1,15 +1,15 @@
-const User = require('./../model/user');
+const User = require('./../../model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const handleLogin = async (req, res)=>{
-    const {user, pass} = req.body;
-    if (!user || !pass) return res.status(400).json({'message': "Username and Password are required"});
+    const {username, password} = req.body;
+    if (!username || !password) return res.status(400).json({'message': "Username and Password are required"});
 
-    const foundUser = await User.findOne({username: user}).exec();
+    const foundUser = await User.findOne({username: username}).exec();
     if (!foundUser) return res.sendStatus(401);
-    const match = await bcrypt.compare(pass, foundUser.password);
+    const match = await bcrypt.compare(password, foundUser.password);
 
     if (match){
         //jwt token

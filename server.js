@@ -20,9 +20,9 @@ app.use((req,res,next)=>{
   next();
 })
 
-app.use('/',require('./routes/rootRoutes'))
+app.use('/api',require('./routes/authRoutes'))
 app.use(verifyJWT)
-// app.use('/user',require('./routes/userRoutes'))
+app.use('/api/user',require('./routes/userRoutes'))
 
 mongoose.connection.once('open',()=>{
   app.listen(PORT, () => {
