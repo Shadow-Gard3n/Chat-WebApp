@@ -1,4 +1,4 @@
-// src/pages/Signup.js
+import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Eye, EyeOff, MessageCircle, User, Lock } from "lucide-react";
 
 function Login() {
   const navigate = useNavigate();
+  const { setAccessToken } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -26,6 +27,7 @@ function Login() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
+      credentials: "include", //for refresh token
     })
       .then((res) => {
         if (!res.ok) {
@@ -35,6 +37,7 @@ function Login() {
       })
       .then((data) => {
         console.log("Login success:", data);
+        setAccessToken(data.accessToken);
         // move to login after success signup
         navigate("/home");
       })
@@ -62,7 +65,7 @@ function Login() {
               Welcome Back
             </h2>
             <p className="text-slate-400 text-center">
-              Please sign in to continue
+              Please log in to continue
             </p>
           </div>
 
@@ -140,7 +143,7 @@ function Login() {
                   Signing in...
                 </>
               ) : (
-                "Sign Up"
+                "Log In"
               )}
             </button>
           </form>

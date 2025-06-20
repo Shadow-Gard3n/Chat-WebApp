@@ -8,7 +8,8 @@ const corsconfig = {
     else{
       callback(new Error("Not allowed "))
     }
-  }
+  },
+  credentials: true
 }
 
 module.exports = corsconfig;
