@@ -28,6 +28,13 @@ const requestStatusHandler = async (req, res)=>{
                 { $addToSet: { connectedUsers: to } },
                 { upsert: true, new: true }
             );
+
+            await ConnectedUsers.findOneAndUpdate(
+                { username: to },
+                { $addToSet: { connectedUsers: from } },
+                { upsert: true, new: true }
+            );
+
         }
 
         // updating status in friendrequest db

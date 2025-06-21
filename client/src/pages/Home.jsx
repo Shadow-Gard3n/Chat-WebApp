@@ -5,9 +5,13 @@ import { jwtDecode } from "jwt-decode";
 import { Search, User, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
+import { useRef } from "react";
+import FriendRequestList from "../components/FriendRequestList";
+import UserSearchResults from "../components/UserSearchResults";
 
 function Home() {
   const navigate = useNavigate();
+  const searchRef = useRef(null);
   const { accessToken, setAccessToken } = useAuth();
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
@@ -47,6 +51,13 @@ function Home() {
 
       const data = await res.json();
       console.log(data);
+
+      setReceivedRequests((prev) =>
+        prev.map((req) =>
+          req._id === requestId ? { ...req, status: data.request.status } : req
+        )
+      );
+
       await fetchFriendRequests();
       await fetchFriends();
     } catch (err) {
@@ -67,6 +78,12 @@ function Home() {
           accessToken,
           setAccessToken
         );
+
+        if (res.status === 404) {
+          setSearchUsers([" "]);
+          return;
+        }
+
         const data = await res.json();
         console.log(data);
         const filtered = data.filter((user) => user.username !== username);
@@ -76,6 +93,20 @@ function Home() {
       }
     }
   };
+
+  // to remove the dropdown of search bar
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchUsers([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const fetchFriendRequests = async () => {
     try {
@@ -127,7 +158,7 @@ function Home() {
     }
   };
 
-  useEffect(() => {
+  const fetchFriends = () => {
     if (!accessToken) return;
     const fetchUsers = async () => {
       try {
@@ -145,108 +176,107 @@ function Home() {
         console.error("Error fetching users:", err.message);
       }
     };
-
     fetchUsers();
+  };
+
+  useEffect(() => {
+    fetchFriends();
   }, [accessToken, setAccessToken]);
 
   console.log(username);
 
   return (
-    <div className="">
-      <h1 className="">Welcome, {username}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-white p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Header Row */}
+        <div className="flex justify-between items-center">
+          {/* Welcome Text Left */}
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent whitespace-nowrap">
+            Welcome, {username}
+          </h1>
 
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={SearchQuery}
-        placeholder="Search..."
-        className=""
-      />
-      {searchUsers.length > 0 && (
-        <div className="absolute z-10 w-full bg-white shadow-md rounded mt-1 max-h-60 overflow-y-auto">
-          {searchUsers.map((user, index) => {
-            const status = getRequestStatus(user.username);
-            return (
-              <div
-                key={index}
-                className="px-4 py-2 flex justify-between items-center hover:bg-blue-100"
+          {/* Buttons Right */}
+          <div className="flex gap-4">
+            <div className="relative">
+              <button
+                onClick={getRequests}
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition"
               >
-                <span>{user.username}</span>
+                <MessageCircle className="w-5 h-5" />
+                Requests
+              </button>
 
-                {status ? (
-                  <button
-                    disabled
-                    className={`px-3 py-1 rounded text-sm ${
-                      status === "pending"
-                        ? "bg-yellow-400 text-white"
-                        : status === "accepted"
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-400 text-white"
-                    }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => sendFriendRequest(user.username)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
-                  >
-                    Send-Request
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <button onClick={getRequests} className="">
-        <MessageCircle />
-      </button>
-
-      {showRequests && (
-        <div className="absolute mt-2 w-full bg-white shadow-md rounded z-20 p-4 max-h-60 overflow-y-auto">
-          <h3 className="text-lg font-semibold mb-2">Friend Requests</h3>
-          {receivedRequests.length > 0 ? (
-            receivedRequests.map((req, index) => (
-              <div
-                key={req._id}
-                className="flex justify-between items-center border-b py-2"
-              >
-                <span className="font-medium">{req.from}</span>
-                <div className="space-x-2">
-                  <button
-                    onClick={() => handleRequestStatus(req._id, "accept")}
-                    className="bg-green-500 text-white px-3 py-1 rounded text-sm"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleRequestStatus(req._id, "reject")}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-sm"
-                  >
-                    Reject
-                  </button>
+              {/* Friend Requests Dropdown */}
+              {showRequests && (
+                <div className="absolute top-full left-0 mt-2 w-80 z-50 bg-zinc-800 rounded-lg shadow-lg">
+                  <FriendRequestList
+                    requests={receivedRequests}
+                    onAccept={(id) => handleRequestStatus(id, "accept")}
+                    onReject={(id) => handleRequestStatus(id, "reject")}
+                  />
                 </div>
+              )}
+            </div>
+
+            <button
+              onClick={goToProfile}
+              className="flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg transition"
+            >
+              <User className="w-5 h-5" />
+              Profile
+            </button>
+          </div>
+        </div>
+
+        {/* Search Input */}
+        <div ref={searchRef} className="relative">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={SearchQuery}
+            placeholder="Search..."
+            className="w-full px-4 py-2 rounded-lg bg-zinc-800 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          />
+          {searchUsers.length > 0 &&
+            (searchUsers[0] === " " ? (
+              <div className="text-red-400 px-4 py-2 italic flex items-center gap-2">
+                <Search className="w-4 h-4" />
+                <span>No users found</span>
               </div>
-            ))
+            ) : (
+              <UserSearchResults
+                results={searchUsers}
+                getRequestStatus={getRequestStatus}
+                onSendRequest={sendFriendRequest}
+              />
+            ))}
+        </div>
+
+        {/* Friend List */}
+        <div>
+          <h2 className="text-lg font-semibold mb-2 text-gray-100">
+            Your Friends:
+          </h2>
+          {users.length > 0 ? (
+            <div className="flex flex-col space-y-2">
+              {users.map((user, index) => (
+                <button
+                  key={index}
+                  className="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-lg text-left transition"
+                >
+                  {user}
+                </button>
+              ))}
+            </div>
           ) : (
-            <p className="text-gray-500">No new requests</p>
+            <div className="flex justify-center">
+              <p className="text-sm text-gray-400 font-bold italic">
+                No friends yet.
+              </p>
+            </div>
           )}
         </div>
-      )}
-
-      <button onClick={goToProfile} className="">
-        <User className="" />
-      </button>
-
-      <div className="">
-        {users.map((user, index) => (
-          <button key={index} className="">
-            {user}
-          </button>
-        ))}
       </div>
     </div>
   );
