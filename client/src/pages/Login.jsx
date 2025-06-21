@@ -169,43 +169,6 @@ function Login() {
       </div>
     </div>
   );
-
-  // return (
-  //   <div>
-  //     <h2>Login</h2>
-  //     <form onSubmit={handleSubmit}>
-  //       <div>
-  //         <label>Username: </label>
-  //         <input
-  //           type="text"
-  //           required
-  //           value={formData.username}
-  //           onChange={(e) =>
-  //             setFormData({ ...formData, username: e.target.value })
-  //           }
-  //         />
-  //       </div>
-
-  //       <div>
-  //         <label>Password: </label>
-  //         <input
-  //           type="password"
-  //           required
-  //           value={formData.password}
-  //           onChange={(e) =>
-  //             setFormData({ ...formData, password: e.target.value })
-  //           }
-  //         />
-  //       </div>
-
-  //       <button type="submit">Login</button>
-  //     </form>
-
-  //     <p style={{ marginTop: "10px" }}>
-  //       Do not have an account? <Link to="/signup">Signup here</Link>
-  //     </p>
-  //   </div>
-  // );
 }
 
 export default Login;

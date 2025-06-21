@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
-  const [loading, setLoading] = useState(true); // <-- add this
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const refreshToken = async () => {
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.error("Auto-refresh failed:", err.message);
       } finally {
-        setLoading(false); // <-- important!
+        setLoading(false);
       }
     };
 
