@@ -190,12 +190,12 @@ function Home() {
   console.log(username);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header Row */}
         <div className="flex justify-between items-center">
           {/* Welcome Text Left */}
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent whitespace-nowrap">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
             Welcome, {username}
           </h1>
 
@@ -204,7 +204,7 @@ function Home() {
             <div className="relative">
               <button
                 onClick={getRequests}
-                className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition"
               >
                 <MessageCircle className="w-5 h-5" />
                 Requests
@@ -240,7 +240,7 @@ function Home() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={SearchQuery}
             placeholder="Search..."
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
           />
           {searchUsers.length > 0 &&
             (searchUsers[0] === " " ? (
@@ -268,7 +268,7 @@ function Home() {
                 <button
                   onClick={() => goToChat(user)}
                   key={index}
-                  className="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-lg text-left transition"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-4 py-2 rounded-lg text-left transition"
                 >
                   {user}
                 </button>

@@ -1,11 +1,18 @@
 const Message = require('./../model/chat');
 
+const onlineUsers = new Map();
 const userSocketMap = {}; 
 
 function socketHandler(io) {
   io.on('connection', (socket) => {
-    // console.log('New socket connected:', socket.id);
     const username = socket.user.username;
+    
+    // to map online user
+    if (username) {
+        onlineUsers.set(username, socket.id);
+        io.emit("online-users", Array.from(onlineUsers.keys()));
+    }
+
     userSocketMap[username] = socket.id;
     console.log(`${username} connected with socket id ${socket.id}`);
 
