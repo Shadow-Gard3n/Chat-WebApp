@@ -48,6 +48,8 @@ function socketHandler(io) {
 
     socket.on('disconnect', () => {
         delete userSocketMap[username];
+        onlineUsers.delete(username);             
+        io.emit("online-users", Array.from(onlineUsers.keys())); 
         console.log(`${username} disconnected`);
     });
   });
