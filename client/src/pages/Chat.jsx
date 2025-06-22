@@ -1,28 +1,46 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { fetchWithAuth } from "../utils/Api";
+import { jwtDecode } from "jwt-decode";
 
 function Chat() {
   const { friendUsername } = useParams();
-  const { accessToken } = useAuth();
-
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [username, setUsername] = useState("");
+  const { accessToken, setAccessToken } = useAuth();
   const socketRef = useRef(null);
 
-  // Extract username from JWT
-  useEffect(() => {
-    if (accessToken) {
-      const payload = JSON.parse(atob(accessToken.split(".")[1]));
-      setUsername(payload.username);
-    }
+  const username = useMemo(() => {
+    return accessToken ? jwtDecode(accessToken)?.username : "";
   }, [accessToken]);
+
+  const getChatHistory = async () => {
+    try {
+      const res = await fetchWithAuth(
+        `http://localhost:3500/api/user/chatsFrom/${username}/to/${friendUsername}`,
+        { method: "GET" },
+        accessToken,
+        setAccessToken
+      );
+
+      const data = await res.json();
+      console.log("Chat history:", data);
+      setMessages(data);
+    } catch (err) {
+      console.error("Error fetching chat:", err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (username && friendUsername && accessToken) {
+      getChatHistory();
+    }
+  }, [username, friendUsername, accessToken]);
 
   useEffect(() => {
     if (!accessToken) return;
-
     socketRef.current = io("http://localhost:3500", {
       withCredentials: true,
       auth: { token: accessToken },
