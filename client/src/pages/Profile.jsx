@@ -31,6 +31,14 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-gray-900 text-white flex items-center justify-center">
+      <button
+        onClick={() => navigate("/home")}
+        className="absolute top-6 left-6 text-white text-4xl font-light hover:text-blue-400 transition-transform hover:scale-110"
+        aria-label="Go back"
+      >
+        ←
+      </button>
+
       <div className="bg-zinc-800 p-8 rounded-xl shadow-lg w-full max-w-md space-y-6 text-center">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
           Your Profile

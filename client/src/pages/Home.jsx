@@ -69,6 +69,10 @@ function Home() {
     navigate("/profile");
   };
 
+  const goToChat = (friendUsername) => {
+    navigate(`/chat/${friendUsername}`);
+  };
+
   const SearchQuery = async (e) => {
     if (e.key === "Enter") {
       try {
@@ -262,6 +266,7 @@ function Home() {
             <div className="flex flex-col space-y-2">
               {users.map((user, index) => (
                 <button
+                  onClick={() => goToChat(user)}
                   key={index}
                   className="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-lg text-left transition"
                 >
