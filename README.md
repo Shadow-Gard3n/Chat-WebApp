@@ -5,14 +5,9 @@ A real-time chat web application with friend system, online status, and message 
 ---
 
 ## 📸 Preview
-
-> Add your images below in the `images/` directory or anywhere public and replace the links here.
-
-<p float="left">
-  ![image](https://github.com/user-attachments/assets/fed91e5f-37c2-4ce8-b571-59aac6f42343)
-  ![image](https://github.com/user-attachments/assets/05ea8d04-d995-4dcf-b2b6-4fd0ac24324f)
-  ![image](https://github.com/user-attachments/assets/b6a5743b-ec3b-4074-8a37-1027c8f071b3)
-</p>
+  <img src="https://github.com/user-attachments/assets/fed91e5f-37c2-4ce8-b571-59aac6f42343" width="600"/>
+  <img src="https://github.com/user-attachments/assets/05ea8d04-d995-4dcf-b2b6-4fd0ac24324f" width="600"/>
+  <img src="https://github.com/user-attachments/assets/b6a5743b-ec3b-4074-8a37-1027c8f071b3" width="600"/>
 
 ---
 
