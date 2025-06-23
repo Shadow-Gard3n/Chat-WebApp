@@ -109,42 +109,6 @@ function Chat() {
   };
 
   return (
-    // <div className="">
-    //   <h2 className="">
-    //     Chatting with <span className="">{friendUsername}</span>
-    //   </h2>
-
-    //   {/* Chat Box Area */}
-    //   <div className="">
-    //     {messages.map((msg, idx) => (
-    //       <div
-    //         key={idx}
-    //         className={`px-4 py-2 rounded-2xl max-w-sm text-sm break-words shadow-md ${
-    //           msg.sender === username
-    //             ? "bg-emerald-600 text-white self-end"
-    //             : "bg-cyan-600 text-white self-start"
-    //         }`}
-    //       >
-    //         {msg.content}
-    //       </div>
-    //     ))}
-    //   </div>
-
-    //   {/* Input area */}
-    //   <div className="">
-    //     <input
-    //       type="text"
-    //       value={messageInput}
-    //       onChange={(e) => setMessageInput(e.target.value)}
-    //       placeholder="Type your message..."
-    //       className=""
-    //     />
-    //     <button onClick={sendMessage} className="">
-    //       Send
-    //     </button>
-    //   </div>
-    // </div>
-
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-6 py-4 shadow-2xl">
@@ -159,13 +123,6 @@ function Chat() {
                 {friendUsername}
               </span>
             </h2>
-            {/* <p
-              className={`text-sm ${
-                isFriendOnline ? "text-green-400" : "text-red-400"
-              }`}
-            >
-              {isFriendOnline ? "Online" : "Offline"}
-            </p> */}
             <p
               className={`text-sm ${
                 onlineUsers.includes(friendUsername)

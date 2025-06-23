@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { fetchWithAuth } from "../utils/Api";
 import { jwtDecode } from "jwt-decode";
-import { Search, User, MessageCircle } from "lucide-react";
+import { Search, User, MessageCircle, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { useRef } from "react";
 import FriendRequestList from "../components/FriendRequestList";
 import UserSearchResults from "../components/UserSearchResults";
+import { io } from "socket.io-client";
+import { useSocket } from "../hooks/useSocket";
 
 function Home() {
   const navigate = useNavigate();
@@ -19,10 +21,34 @@ function Home() {
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setReceivedRequests] = useState([]);
   const [showRequests, setShowRequests] = useState(false);
+  const { socket, onlineUsers } = useSocket(accessToken);
+  // const socketRef = useRef(null);
+  // const [onlineUsers, setOnlineUsers] = useState([]);
 
   const username = useMemo(() => {
     return accessToken ? jwtDecode(accessToken)?.username : "";
   }, [accessToken]);
+
+  // useEffect(() => {
+  //   if (!accessToken) return;
+
+  //   socketRef.current = io("http://localhost:3500", {
+  //     withCredentials: true,
+  //     auth: { token: accessToken },
+  //   });
+
+  //   socketRef.current.on("connect", () => {
+  //     console.log("Connected to socket in Home:", socketRef.current.id);
+  //   });
+
+  //   socketRef.current.on("online-users", (users) => {
+  //     setOnlineUsers(users);
+  //   });
+
+  //   return () => {
+  //     socketRef.current.disconnect();
+  //   };
+  // }, [accessToken]);
 
   const getRequestStatus = (toUsername) => {
     const sent = sentRequests.find((req) => req.to === toUsername);
@@ -264,15 +290,33 @@ function Home() {
           </h2>
           {users.length > 0 ? (
             <div className="flex flex-col space-y-2">
-              {users.map((user, index) => (
-                <button
-                  onClick={() => goToChat(user)}
-                  key={index}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-4 py-2 rounded-lg text-left transition"
-                >
-                  {user}
-                </button>
-              ))}
+              {users.map((user, index) => {
+                const isOnline = onlineUsers.includes(user);
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => goToChat(user)}
+                    className="flex items-center gap-4 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition relative"
+                  >
+                    {/* Avatar + Online Dot */}
+                    <div className="relative w-12 h-12">
+                      {/* Lucide UserCircle icon */}
+                      <UserCircle className="w-full h-full text-white" />
+
+                      {/* Online Dot */}
+                      {isOnline && (
+                        <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-[3px] border-zinc-800 rounded-full"></span>
+                      )}
+                    </div>
+
+                    {/* Username */}
+                    <span className="text-white font-semibold text-lg">
+                      {user}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           ) : (
             <div className="flex justify-center">
