@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { fetchWithAuth } from "../utils/Api";
 import { jwtDecode } from "jwt-decode";
 import { Search, User, MessageCircle, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,47 +7,33 @@ import { useMemo } from "react";
 import { useRef } from "react";
 import FriendRequestList from "../components/FriendRequestList";
 import UserSearchResults from "../components/UserSearchResults";
-import { io } from "socket.io-client";
 import { useSocket } from "../hooks/useSocket";
+import FriendList from "../components/FriendList";
+import {
+  fetchFriends,
+  fetchFriendRequests,
+  sendFriendRequest,
+  updateFriendRequestStatus,
+  searchUsers,
+} from "../utils/userApi";
 
 function Home() {
-  const navigate = useNavigate();
-  const searchRef = useRef(null);
   const { accessToken, setAccessToken } = useAuth();
-  const [query, setQuery] = useState("");
-  const [users, setUsers] = useState([]);
-  const [searchUsers, setSearchUsers] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
-  const [receivedRequests, setReceivedRequests] = useState([]);
-  const [showRequests, setShowRequests] = useState(false);
-  const { socket, onlineUsers } = useSocket(accessToken);
-  // const socketRef = useRef(null);
-  // const [onlineUsers, setOnlineUsers] = useState([]);
 
   const username = useMemo(() => {
     return accessToken ? jwtDecode(accessToken)?.username : "";
   }, [accessToken]);
 
-  // useEffect(() => {
-  //   if (!accessToken) return;
+  const navigate = useNavigate();
+  const searchRef = useRef(null);
 
-  //   socketRef.current = io("http://localhost:3500", {
-  //     withCredentials: true,
-  //     auth: { token: accessToken },
-  //   });
-
-  //   socketRef.current.on("connect", () => {
-  //     console.log("Connected to socket in Home:", socketRef.current.id);
-  //   });
-
-  //   socketRef.current.on("online-users", (users) => {
-  //     setOnlineUsers(users);
-  //   });
-
-  //   return () => {
-  //     socketRef.current.disconnect();
-  //   };
-  // }, [accessToken]);
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const [showRequests, setShowRequests] = useState(false);
+  const { socket, onlineUsers } = useSocket(accessToken);
 
   const getRequestStatus = (toUsername) => {
     const sent = sentRequests.find((req) => req.to === toUsername);
@@ -60,32 +45,18 @@ function Home() {
     setShowRequests((prev) => !prev);
   };
 
-  const handleRequestStatus = async (requestId, status) => {
+  const handleRequestStatus = async (id, status) => {
     try {
-      const res = await fetchWithAuth(
-        `http://localhost:3500/api/user/friend-request/${requestId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: status }),
-        },
+      await updateFriendRequestStatus(
+        id,
+        status,
         accessToken,
-        setAccessToken
+        setAccessToken,
+        setReceivedRequests,
+        username,
+        setSentRequests,
+        setUsers
       );
-
-      if (!res.ok) throw new Error("Failed to accept request");
-
-      const data = await res.json();
-      console.log(data);
-
-      setReceivedRequests((prev) =>
-        prev.map((req) =>
-          req._id === requestId ? { ...req, status: data.request.status } : req
-        )
-      );
-
-      await fetchFriendRequests();
-      await fetchFriends();
     } catch (err) {
       console.error("Error accepting request:", err.message);
     }
@@ -102,22 +73,13 @@ function Home() {
   const SearchQuery = async (e) => {
     if (e.key === "Enter") {
       try {
-        const res = await fetchWithAuth(
-          `http://localhost:3500/api/user/search?username=${query}`,
-          { method: "GET" },
+        await searchUsers(
+          query,
+          username,
           accessToken,
-          setAccessToken
+          setAccessToken,
+          setSearchResults
         );
-
-        if (res.status === 404) {
-          setSearchUsers([" "]);
-          return;
-        }
-
-        const data = await res.json();
-        console.log(data);
-        const filtered = data.filter((user) => user.username !== username);
-        setSearchUsers(filtered);
       } catch (err) {
         console.error("Error fetching users:", err.message);
       }
@@ -128,7 +90,7 @@ function Home() {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setSearchUsers([]);
+        setSearchResults([]);
       }
     };
 
@@ -138,80 +100,32 @@ function Home() {
     };
   }, []);
 
-  const fetchFriendRequests = async () => {
-    try {
-      const res = await fetchWithAuth(
-        `http://localhost:3500/api/user/${username}/friend-request`,
-        { method: "GET" },
-        accessToken,
-        setAccessToken
-      );
+  useEffect(() => {
+    fetchFriends(username, accessToken, setAccessToken, setUsers);
+  }, [accessToken, setAccessToken]);
 
-      if (!res.ok) throw new Error("Failed to fetch friend requests");
-
-      const data = await res.json();
-      console.log("Friend Request API Data:", data);
-
-      setSentRequests(data.sentRequests || []);
-      setReceivedRequests(data.receivedRequests || []);
-    } catch (err) {
-      console.error("Error fetching friend requests:", err.message);
-    }
-  };
   useEffect(() => {
     if (username) {
-      fetchFriendRequests();
+      fetchFriendRequests(
+        username,
+        accessToken,
+        setAccessToken,
+        setSentRequests,
+        setReceivedRequests
+      );
     }
   }, [username]);
 
-  const sendFriendRequest = async (toUsername) => {
-    try {
-      const res = await fetchWithAuth(
-        `http://localhost:3500/api/user/${username}/friend-request/${toUsername}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        },
-        accessToken,
-        setAccessToken
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to send friend request");
-      }
-
-      const data = await res.json();
-      console.log("Friend request sent:", data);
-      await fetchFriendRequests();
-    } catch (err) {
-      console.error("Error sending friend request:", err.message);
-    }
+  const handleSendRequest = async (toUsername) => {
+    await sendFriendRequest(username, toUsername, accessToken, setAccessToken);
+    await fetchFriendRequests(
+      username,
+      accessToken,
+      setAccessToken,
+      setSentRequests,
+      setReceivedRequests
+    );
   };
-
-  const fetchFriends = () => {
-    if (!accessToken) return;
-    const fetchUsers = async () => {
-      try {
-        const res = await fetchWithAuth(
-          `http://localhost:3500/api/user/${username}/friends`,
-          { method: "GET" },
-          accessToken,
-          setAccessToken
-        );
-        const data = await res.json();
-        console.log(data);
-        console.log(data.friends);
-        setUsers(data.friends || []);
-      } catch (err) {
-        console.error("Error fetching users:", err.message);
-      }
-    };
-    fetchUsers();
-  };
-
-  useEffect(() => {
-    fetchFriends();
-  }, [accessToken, setAccessToken]);
 
   console.log(username);
 
@@ -220,12 +134,12 @@ function Home() {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header Row */}
         <div className="flex justify-between items-center">
-          {/* Welcome Text Left */}
+          {/* Welcome text */}
           <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
             Welcome, {username}
           </h1>
 
-          {/* Buttons Right */}
+          {/* profile and request button */}
           <div className="flex gap-4">
             <div className="relative">
               <button
@@ -236,7 +150,7 @@ function Home() {
                 Requests
               </button>
 
-              {/* Friend Requests Dropdown */}
+              {/* Friend Requests dropdown */}
               {showRequests && (
                 <div className="absolute top-full left-0 mt-2 w-80 z-50 bg-zinc-800 rounded-lg shadow-lg">
                   <FriendRequestList
@@ -268,64 +182,27 @@ function Home() {
             placeholder="Search..."
             className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
           />
-          {searchUsers.length > 0 &&
-            (searchUsers[0] === " " ? (
+          {searchResults.length > 0 &&
+            (searchResults[0] === " " ? (
               <div className="text-red-400 px-4 py-2 italic flex items-center gap-2">
                 <Search className="w-4 h-4" />
                 <span>No users found</span>
               </div>
             ) : (
               <UserSearchResults
-                results={searchUsers}
+                results={searchResults}
                 getRequestStatus={getRequestStatus}
-                onSendRequest={sendFriendRequest}
+                onSendRequest={handleSendRequest}
               />
             ))}
         </div>
 
         {/* Friend List */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2 text-gray-100">
-            Your Friends:
-          </h2>
-          {users.length > 0 ? (
-            <div className="flex flex-col space-y-2">
-              {users.map((user, index) => {
-                const isOnline = onlineUsers.includes(user);
-
-                return (
-                  <button
-                    key={index}
-                    onClick={() => goToChat(user)}
-                    className="flex items-center gap-4 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition relative"
-                  >
-                    {/* Avatar + Online Dot */}
-                    <div className="relative w-12 h-12">
-                      {/* Lucide UserCircle icon */}
-                      <UserCircle className="w-full h-full text-white" />
-
-                      {/* Online Dot */}
-                      {isOnline && (
-                        <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-[3px] border-zinc-800 rounded-full"></span>
-                      )}
-                    </div>
-
-                    {/* Username */}
-                    <span className="text-white font-semibold text-lg">
-                      {user}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex justify-center">
-              <p className="text-sm text-gray-400 font-bold italic">
-                No friends yet.
-              </p>
-            </div>
-          )}
-        </div>
+        <FriendList
+          users={users}
+          onlineUsers={onlineUsers}
+          goToChat={goToChat}
+        />
       </div>
     </div>
   );

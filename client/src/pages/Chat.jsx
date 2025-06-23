@@ -1,25 +1,24 @@
-import { useEffect, useState, useRef, useMemo } from "react";
-import { io } from "socket.io-client";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { fetchWithAuth } from "../utils/Api";
 import { jwtDecode } from "jwt-decode";
 import { Send, MessageSquare } from "lucide-react";
-// import { useSocket } from "../context/SocketContext";
+import { useAuth } from "../context/AuthContext";
+import { fetchWithAuth } from "../utils/Api";
+import { useSocket } from "../hooks/useSocket";
 
 function Chat() {
   const { friendUsername } = useParams();
-  const [messageInput, setMessageInput] = useState("");
-  const [messages, setMessages] = useState([]);
   const { accessToken, setAccessToken } = useAuth();
-  const socketRef = useRef(null);
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { socket, onlineUsers } = useSocket(accessToken);
 
   const username = useMemo(() => {
     return accessToken ? jwtDecode(accessToken)?.username : "";
   }, [accessToken]);
+
+  const [messageInput, setMessageInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const isFriendOnline = onlineUsers.includes(friendUsername);
 
@@ -27,23 +26,15 @@ function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
   const formatDateTime = (isoString) => {
     const date = new Date(isoString);
-    const options = {
+    return date.toLocaleString(undefined, {
       day: "2-digit",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    };
-    return date.toLocaleString(undefined, options); // uses user’s locale
+    });
   };
 
   const getChatHistory = async () => {
@@ -54,12 +45,29 @@ function Chat() {
         accessToken,
         setAccessToken
       );
-
       const data = await res.json();
-      console.log("Chat history:", data);
       setMessages(data);
     } catch (err) {
       console.error("Error fetching chat:", err.message);
+    }
+  };
+
+  const sendMessage = () => {
+    if (messageInput.trim() === "") return;
+
+    const msg = {
+      receiver: friendUsername,
+      content: messageInput,
+    };
+
+    socket?.emit("chat message", msg);
+    setMessageInput("");
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
@@ -70,43 +78,17 @@ function Chat() {
   }, [username, friendUsername, accessToken]);
 
   useEffect(() => {
-    if (!accessToken) return;
-    socketRef.current = io("http://localhost:3500", {
-      withCredentials: true,
-      auth: { token: accessToken },
-    });
+    if (!socket) return;
 
-    socketRef.current.on("connect", () => {
-      console.log("Connected to socket:", socketRef.current.id);
-    });
-
-    socketRef.current.on("online-users", (users) => {
-      setOnlineUsers(users);
-    });
-
-    socketRef.current.on("chat message", (msg) => {
-      console.log("Message received:", msg);
+    const handleIncomingMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
-    });
+    };
 
+    socket.on("chat message", handleIncomingMessage);
     return () => {
-      socketRef.current.disconnect();
+      socket.off("chat message", handleIncomingMessage);
     };
-  }, [accessToken]);
-
-  const sendMessage = () => {
-    if (messageInput.trim() === "") return;
-
-    const msg = {
-      receiver: friendUsername,
-      content: messageInput,
-    };
-
-    // Emit using socketRef
-    socketRef.current.emit("chat message", msg);
-
-    setMessageInput("");
-  };
+  }, [socket]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
