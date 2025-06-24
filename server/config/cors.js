@@ -1,5 +1,6 @@
 const originlist = ["http://localhost:3500",           
-  "http://localhost:5173",           
+  "http://localhost:5173",
+  "https://chattrix-f6oz7t82y-shadow-gard3ns-projects.vercel.app",           
   process.env.CLIENT_ORIGIN ];
 
 const corsconfig = {
