@@ -19,7 +19,6 @@ import {
 
 function Home() {
   const { accessToken, setAccessToken } = useAuth();
-
   const username = useMemo(() => {
     return accessToken ? jwtDecode(accessToken)?.username : "";
   }, [accessToken]);

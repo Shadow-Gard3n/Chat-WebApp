@@ -35,7 +35,7 @@ const handleLogin = async (req, res)=>{
         res.json({accessToken});
     }
     else {
-        res.sendStatus(401);
+        res.status(401).json({ message: "Invalid username or password" });;
     }
 }
 

@@ -2,7 +2,6 @@ import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-// import { disconnectSocket } from "../utils/Socket";
 
 function Profile() {
   const { accessToken, setAccessToken } = useAuth();
@@ -20,7 +19,6 @@ function Profile() {
       });
 
       if (res.status === 204) {
-        // disconnectSocket();
         setAccessToken(null);
         navigate("/login");
       } else {

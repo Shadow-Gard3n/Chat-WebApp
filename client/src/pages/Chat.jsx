@@ -5,6 +5,7 @@ import { Send, MessageSquare } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { fetchWithAuth } from "../utils/Api";
 import { useSocket } from "../hooks/useSocket";
+import { apiFetch } from "../utils/endpoint";
 
 function Chat() {
   const { friendUsername } = useParams();

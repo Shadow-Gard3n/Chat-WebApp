@@ -2,7 +2,14 @@ import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, MessageCircle, User, Lock } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  MessageCircle,
+  User,
+  Lock,
+  AlertCircle,
+} from "lucide-react";
 
 function Login() {
   const navigate = useNavigate();
@@ -11,7 +18,7 @@ function Login() {
     username: "",
     password: "",
   });
-
+  const [loginError, setLoginError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,19 +37,22 @@ function Login() {
       credentials: "include", //for refresh token
     })
       .then((res) => {
+        setIsLoading(false);
         if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error("Invalid username or password");
+          }
           throw new Error("Login failed");
         }
-        return res.json(); // from backend
+        return res.json();
       })
       .then((data) => {
-        console.log("Login success:", data);
         setAccessToken(data.accessToken);
-        // move to login after success signup
         navigate("/home");
       })
       .catch((err) => {
-        console.error("Error:", err.message);
+        setLoginError(err.message);
+        console.error("Login error:", err.message);
       });
   };
 
@@ -131,6 +141,13 @@ function Login() {
                 </button>
               </div>
             </div>
+
+            {loginError && (
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/40 text-red-400 px-4 py-2 rounded-lg shadow-sm">
+                <AlertCircle className="w-5 h-5" />
+                <p className="text-sm font-medium">{loginError}</p>
+              </div>
+            )}
 
             <button
               type="submit"

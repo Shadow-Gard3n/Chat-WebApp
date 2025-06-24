@@ -7,6 +7,7 @@ import {
   User,
   Lock,
   CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +27,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [signupError, setSignupError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,19 +41,20 @@ function Signup() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     })
-      .then((res) => {
-        if (!res.ok) {
+      .then(async (res) => {
+        if (res.status === 409) {
+          throw new Error("Username already exists");
+        } else if (!res.ok) {
           throw new Error("Signup failed");
         }
-        return res.json(); // from backend
+        return res.json(); // success
       })
       .then((data) => {
         console.log("Signup success:", data);
-
-        // move to login after success signup
         navigate("/login");
       })
       .catch((err) => {
+        setSignupError(err.message);
         console.error("Error:", err.message);
       });
   };
@@ -184,6 +187,13 @@ function Signup() {
                   </p>
                 )}
             </div>
+
+            {signupError && (
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/40 text-red-400 px-4 py-2 rounded-lg shadow-sm">
+                <AlertCircle className="w-5 h-5" />
+                <p className="text-sm font-medium">{signupError}</p>
+              </div>
+            )}
 
             <button
               type="submit"

@@ -1,4 +1,6 @@
-const originlist = ["http://localhost:3500", "http://localhost:5173"];
+const originlist = ["http://localhost:3500",           
+  "http://localhost:5173",           
+  process.env.CLIENT_ORIGIN ];
 
 const corsconfig = {
   origin: (origin, callback)=>{
