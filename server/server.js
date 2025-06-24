@@ -38,8 +38,7 @@ const io = new Server(server, {
   cors: {
     origin: ["http://localhost:3500",           
   "http://localhost:5173",
-  "https://chattrix-lyart.vercel.app",
-  "https://chattrix-ijqxvlh5z-shadow-gard3ns-projects.vercel.app/",          
+  "https://delicate-taiyaki-894046.netlify.app",          
   process.env.CLIENT_ORIGIN ], // react frontend
     methods: ['GET', 'POST'],
     credentials: corsconfig.credentials
