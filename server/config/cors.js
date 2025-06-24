@@ -1,6 +1,6 @@
 const originlist = ["http://localhost:3500",           
   "http://localhost:5173",
-  "https://chattrix-lyart.vercel.app",           
+  "https://delicate-taiyaki-894046.netlify.app",         
   process.env.CLIENT_ORIGIN ];
 
 const corsconfig = {

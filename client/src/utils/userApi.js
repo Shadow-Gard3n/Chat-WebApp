@@ -103,7 +103,7 @@ export const searchUsers = async (
   setSearchResults
 ) => {
   const res = await fetchWithAuth(
-    `${BASE_URL}/search?username=${query}`,
+    `${BASE_URL}/api/user/search?username=${query}`,
     { method: "GET" },
     accessToken,
     setAccessToken
