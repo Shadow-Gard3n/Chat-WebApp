@@ -1,6 +1,6 @@
 const originlist = ["http://localhost:3500",           
   "http://localhost:5173",
-  "https://echoconverse.netlify.app/",         
+  "https://echoconverse.netlify.app",         
   process.env.CLIENT_ORIGIN ];
 
 const corsconfig = {
