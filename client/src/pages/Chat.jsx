@@ -93,8 +93,12 @@ function Chat() {
     };
   }, [socket]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
       {/* Header */}
       <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-6 py-4 shadow-2xl">
         <div className="mx-auto flex items-center space-x-3">
@@ -132,7 +136,7 @@ function Chat() {
       {/* Chat Box Area */}
       <div className="flex-1 overflow-hidden">
         <div className="mx-auto h-full flex flex-col">
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 scrollbar-none">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
