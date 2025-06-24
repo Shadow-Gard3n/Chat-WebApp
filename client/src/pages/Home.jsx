@@ -132,18 +132,18 @@ function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header Row */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           {/* Welcome text */}
           <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
             Welcome, {username}
           </h1>
 
           {/* profile and request button */}
-          <div className="flex gap-4">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div className="relative w-full sm:w-auto">
               <button
                 onClick={getRequests}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition"
               >
                 <MessageCircle className="w-5 h-5" />
                 Requests
@@ -163,7 +163,7 @@ function Home() {
 
             <button
               onClick={goToProfile}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg transition"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg transition"
             >
               <User className="w-5 h-5" />
               Profile
