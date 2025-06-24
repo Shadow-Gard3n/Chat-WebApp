@@ -38,7 +38,7 @@ const io = new Server(server, {
   cors: {
     origin: ["http://localhost:3500",           
   "http://localhost:5173",
-  "https://delicate-taiyaki-894046.netlify.app",          
+  "https://echoconverse.netlify.app/",          
   process.env.CLIENT_ORIGIN ], // react frontend
     methods: ['GET', 'POST'],
     credentials: corsconfig.credentials
