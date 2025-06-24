@@ -6,8 +6,10 @@ import { useAuth } from "../context/AuthContext";
 import { fetchWithAuth } from "../utils/Api";
 import { useSocket } from "../hooks/useSocket";
 import { BASE_URL } from "../utils/endpoint";
+import { useNavigate } from "react-router-dom";
 
 function Chat() {
+  const navigate = useNavigate();
   const { friendUsername } = useParams();
   const { accessToken, setAccessToken } = useAuth();
   const { socket, onlineUsers } = useSocket(accessToken);
@@ -96,6 +98,14 @@ function Chat() {
       {/* Header */}
       <div className="bg-black/20 backdrop-blur-xl border-b border-white/10 px-6 py-4 shadow-2xl">
         <div className="mx-auto flex items-center space-x-3">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate("/home")}
+            className="mr-4 text-white hover:text-purple-400 text-xl md:text-2xl"
+            aria-label="Go back"
+          >
+            ←
+          </button>
           <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full">
             <MessageSquare className="w-6 h-6 text-white" />
           </div>
