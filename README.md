@@ -57,18 +57,26 @@ A real-time chat web application with friend system, online status, and message 
 ```
 📦 CHATWEBAPP
 ├── client # React frontend
-│ ├── public
-│ ├── src
-│ ├── index.html
-│ └── vite.config.js
-├── config # Database config and environment
-├── controller # Controllers for auth, chat, users
-├── middleware # Auth middleware, token verification
-├── model # Mongoose models
-├── routes # API routes
-├── sockets # Socket.IO logic
-├── server.js # Main Express app
-├── .env
+│   ├── public
+│   ├── src
+|   |    ├── components/
+|   |    ├── pages/
+|   |    ├── hooks/
+|   |    ├── utils/
+|   |    ├── context/
+|   |    ├── App.jsx
+|   |    ├── main.jsx
+│   ├── index.html
+│   └── vite.config.js
+├── server
+    ├── config # Database config and environment
+    ├── controller # Controllers for auth, chat, users
+    ├── middleware # Auth middleware, token verification
+    ├── model # Mongoose models
+    ├── routes # API routes
+    ├── sockets # Socket.IO logic
+    ├── server.js # Main Express app
+    ├── .env
 ```
 ### ⚙️ Backend Setup
 
@@ -82,6 +90,7 @@ npm run dev      # Runs server with nodemon
 REFRESH_TOKEN_KEY=refresh_secret_key
 ACCESS_TOKEN_KEY=access_secret_key
 DATABASE_URL=mongo_db
+CLIENT_ORIGIN=frontent_domain
 ```
 
 ### ⚙️ Frontend Setup
