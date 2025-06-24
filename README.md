@@ -11,6 +11,12 @@ A real-time chat web application with friend system, online status, and message 
 
 ---
 
+## 🌐 Live Website
+
+👉 [https://echoconverse.netlify.app/login](https://echoconverse.netlify.app/login)
+
+---
+
 ## ✨ Features
 
 - 🔒 JWT-based authentication with cookie sessions
@@ -32,6 +38,7 @@ A real-time chat web application with friend system, online status, and message 
 - JWT + cookie-session
 - Socket.IO
 - Dotenv, CORS, Bcrypt
+- **🔗 Deployed on: Render**
 
 ### 💻 Frontend (React + Vite)
 
@@ -41,6 +48,7 @@ A real-time chat web application with friend system, online status, and message 
 - Lucide-react
 - Socket.IO Client
 - JWT Decode
+- **🚀 Deployed on: Netlify**
 
 ---
 
