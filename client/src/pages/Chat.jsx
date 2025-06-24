@@ -5,7 +5,7 @@ import { Send, MessageSquare } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { fetchWithAuth } from "../utils/Api";
 import { useSocket } from "../hooks/useSocket";
-import { apiFetch } from "../utils/endpoint";
+import { BASE_URL } from "../utils/endpoint";
 
 function Chat() {
   const { friendUsername } = useParams();
@@ -41,7 +41,7 @@ function Chat() {
   const getChatHistory = async () => {
     try {
       const res = await fetchWithAuth(
-        `http://localhost:3500/api/user/chatsFrom/${username}/to/${friendUsername}`,
+        `${BASE_URL}/api/user/chatsFrom/${username}/to/${friendUsername}`,
         { method: "GET" },
         accessToken,
         setAccessToken

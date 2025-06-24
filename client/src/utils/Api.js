@@ -1,3 +1,4 @@
+import { BASE_URL } from "../utils/endpoint";
 
 export const fetchWithAuth = async (url, options = {}, accessToken, setAccessToken) => {
   const res = await fetch(url, {
@@ -9,7 +10,7 @@ export const fetchWithAuth = async (url, options = {}, accessToken, setAccessTok
   });
 
   if (res.status === 403 || res.status === 401) {
-    const refreshRes = await fetch("http://localhost:3500/api/refresh", {
+    const refreshRes = await fetch(`${BASE_URL}/api/refresh`, {
       method: "GET",
       credentials: "include",
     });

@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/endpoint";
 
 function Signup() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function Signup() {
       return;
     }
     console.log("Signup data:", formData);
-    fetch("http://localhost:3500/api/signup", {
+    fetch(`${BASE_URL}/api/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

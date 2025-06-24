@@ -10,6 +10,7 @@ import {
   Lock,
   AlertCircle,
 } from "lucide-react";
+import { BASE_URL } from "../utils/endpoint";
 
 function Login() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function Login() {
     e.preventDefault();
     console.log("Login data:", formData);
 
-    fetch("http://localhost:3500/api/login", {
+    fetch(`${BASE_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 
 const AuthContext = createContext();
+import { BASE_URL } from "../utils/endpoint";
 
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
@@ -9,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const refreshToken = async () => {
       try {
-        const res = await fetch("http://localhost:3500/api/refresh", {
+        const res = await fetch(`${BASE_URL}/api/refresh`, {
           method: "GET",
           credentials: "include",
         });

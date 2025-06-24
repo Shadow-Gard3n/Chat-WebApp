@@ -2,6 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/endpoint";
 
 function Profile() {
   const { accessToken, setAccessToken } = useAuth();
@@ -13,7 +14,7 @@ function Profile() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:3500/api/logout", {
+      const res = await fetch(`${BASE_URL}/api/logout`, {
         method: "GET",
         credentials: "include",
       });

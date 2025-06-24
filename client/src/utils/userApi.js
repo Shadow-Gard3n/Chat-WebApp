@@ -1,11 +1,11 @@
 import { fetchWithAuth } from "./Api";
-
+import { BASE_URL } from "../utils/endpoint";
 
 // home page routes 
 export const fetchFriendRequests = async (username, token, setToken, setSent, setReceived) => {
   try {
     const res = await fetchWithAuth(
-      `http://localhost:3500/api/user/${username}/friend-request`,
+      `${BASE_URL}/api/user/${username}/friend-request`,
       { method: "GET" },
       token,
       setToken
@@ -22,7 +22,7 @@ export const fetchFriendRequests = async (username, token, setToken, setSent, se
 export const fetchFriends = async (username, token, setToken, setUsers) => {
   try {
     const res = await fetchWithAuth(
-      `http://localhost:3500/api/user/${username}/friends`,
+      `${BASE_URL}/api/user/${username}/friends`,
       { method: "GET" },
       token,
       setToken
@@ -37,7 +37,7 @@ export const fetchFriends = async (username, token, setToken, setUsers) => {
 export const sendFriendRequest = async (username, toUsername, token, setToken) => {
   try {
     const res = await fetchWithAuth(
-      `http://localhost:3500/api/user/${username}/friend-request/${toUsername}`,
+      `${BASE_URL}/api/user/${username}/friend-request/${toUsername}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,7 +64,7 @@ export const updateFriendRequestStatus = async (
   setUsers
 ) => {
   const res = await fetchWithAuth(
-    `http://localhost:3500/api/user/friend-request/${requestId}`,
+    `${BASE_URL}/api/user/friend-request/${requestId}`,
     {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -103,7 +103,7 @@ export const searchUsers = async (
   setSearchResults
 ) => {
   const res = await fetchWithAuth(
-    `http://localhost:3500/api/user/search?username=${query}`,
+    `${BASE_URL}/search?username=${query}`,
     { method: "GET" },
     accessToken,
     setAccessToken

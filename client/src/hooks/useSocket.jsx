@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import { BASE_URL } from "../utils/endpoint";
 
 export const useSocket = (accessToken) => {
   const socketRef = useRef(null);
@@ -8,7 +9,7 @@ export const useSocket = (accessToken) => {
   useEffect(() => {
     if (!accessToken) return;
 
-    socketRef.current = io("http://localhost:3500", {
+    socketRef.current = io(`${BASE_URL}`, {
       withCredentials: true,
       auth: { token: accessToken },
     });
