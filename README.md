@@ -56,27 +56,28 @@ A real-time chat web application with friend system, online status, and message 
 
 ```
 📦 CHATWEBAPP
-├── client # React frontend
+├── client                     # React frontend
 │   ├── public
 │   ├── src
-|   |    ├── components/
-|   |    ├── pages/
-|   |    ├── hooks/
-|   |    ├── utils/
-|   |    ├── context/
-|   |    ├── App.jsx
-|   |    ├── main.jsx
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Page-level components (e.g., Home, Chat)
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── utils/             # Utility functions
+│   │   ├── context/           # Context providers (e.g., AuthContext)
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   ├── index.html
 │   └── vite.config.js
-├── server
-    ├── config # Database config and environment
-    ├── controller # Controllers for auth, chat, users
-    ├── middleware # Auth middleware, token verification
-    ├── model # Mongoose models
-    ├── routes # API routes
-    ├── sockets # Socket.IO logic
-    ├── server.js # Main Express app
-    ├── .env
+├── server                    # Express backend
+│   ├── config/               # Database connection and environment setup
+│   ├── controller/           # Route handler logic (auth, chat, users)
+│   ├── middleware/           # Authentication and error-handling middleware
+│   ├── model/                # Mongoose schemas and models
+│   ├── routes/               # API endpoint definitions
+│   ├── sockets/              # Socket.IO event handlers
+│   ├── server.js             # Main Express app entry point
+│   └── .env                  # Environment variables
+├── README.md
 ```
 ### ⚙️ Backend Setup
 
